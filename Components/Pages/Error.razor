@@ -1,0 +1,54 @@
+@page "/error"
+@using Microsoft.AspNetCore.Diagnostics
+
+<PageTitle>Error</PageTitle>
+
+<RadzenRow Gap="5" RowGap="5">
+    <RadzenColumn Size="12" class="text-center">
+        <RadzenIcon Icon="error" Style="font-size: 4rem; color: var(--rz-danger);"/>
+        <RadzenText TextStyle="TextStyle.H3" class="mt-4">Oops! Something went wrong</RadzenText>
+
+        @if (ShowDetails)
+        {
+            <RadzenCard class="mt-4">
+                <RadzenText TextStyle="TextStyle.Body2" class="text-start">
+                    <pre>@ErrorMessage</pre>
+                </RadzenText>
+            </RadzenCard>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1" class="mt-3">
+                We're sorry, but an error occurred while processing your request.
+            </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body2" class="mt-2">
+                Please try again later or contact support if the problem persists.
+            </RadzenText>
+        }
+
+        <RadzenButton Text="Go to Home" Icon="home" ButtonStyle="ButtonStyle.Primary"
+                      Click="@(() => NavigationManager.NavigateTo("/"))" class="mt-4"/>
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] private IHostEnvironment Environment { get; set; } = default!;
+
+    private bool ShowDetails => Environment.IsDevelopment();
+    private string? ErrorMessage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ShowDetails)
+        {
+            var exceptionFeature = HttpContext?.Features.Get<IExceptionHandlerFeature>();
+            if (exceptionFeature != null)
+            {
+                ErrorMessage = exceptionFeature.Error.ToString();
+            }
+        }
+    }
+
+    [CascadingParameter] private HttpContext? HttpContext { get; set; }
+}

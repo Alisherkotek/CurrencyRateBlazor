@@ -1,0 +1,32 @@
+@* Основной компонент приложения — задаёт HTML-структуру *@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <base href="/"/>
+    <RadzenTheme @rendermode="InteractiveServer" Theme="material"/>
+    <link rel="stylesheet" href="css/site.css"/>
+    <link rel="icon" href="favicon.ico"/>
+    <HeadOutlet @rendermode="InteractiveServer"/>
+</head>
+<body>
+<Routes @rendermode="InteractiveServer"/>
+<script src="_framework/blazor.web.js"></script>
+<script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
+<script>
+    // вспомогательная функция для скачивания файлов из Blazor
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = Uint8Array.from(atob(contentStreamReference), c => c.charCodeAt(0));
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url); // очистка памяти
+    }
+</script>
+</body>
+</html>

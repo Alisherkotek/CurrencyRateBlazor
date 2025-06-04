@@ -1,0 +1,122 @@
+@page "/"
+
+<PageTitle>Currency Exchange Rates</PageTitle>
+
+<RadzenRow Gap="5" RowGap="5">
+    <RadzenColumn Size="12">
+        <RadzenText Text="Currency Exchange Rates" TextStyle="Radzen.Blazor.TextStyle.DisplayH3" TagName="Radzen.Blazor.TagName.H1"></RadzenText>
+        <RadzenText Text="Real-time currency exchange rates with automatic updates" TextStyle="Radzen.Blazor.TextStyle.Body1" class="mt-2 mb-4"></RadzenText>
+
+        <RadzenCard>
+            <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+                <RadzenRow Gap="1rem" AlignItems="AlignItems.End" Style="flex-wrap: wrap;">
+                    <RadzenColumn Size="12" SizeSM="3" SizeMD="2">
+                        <RadzenFormField Text="Amount" Style="width: 100%;">
+                            <RadzenNumeric @bind-Value="@_baseAmount" Min="0" Step="1" Placeholder="1" Style="width: 100%;"/>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeSM="3" SizeMD="2">
+                        <RadzenFormField Text="Base Currency" Style="width: 100%;">
+                            <RadzenDropDown @bind-Value="@_baseCurrency"
+                                            Data="@_allAvailableCurrencies"
+                                            ValueProperty="Code"
+                                            TextProperty="Code"
+                                            AllowClear="false"
+                                            AllowFiltering="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            Change="@OnBaseCurrencyChanged"
+                                            Placeholder="Select currency"
+                                            Style="width: 100%;"/>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6" SizeSM="2">
+                        <RadzenButton Text="Refresh"
+                                      Icon="refresh"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Click="@RefreshData"
+                                      IsBusy="@_isRefreshing"
+                                      Style="width: 100%;"/>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6" SizeSM="2">
+                        <RadzenButton Text="Download"
+                                      Icon="download"
+                                      ButtonStyle="ButtonStyle.Success"
+                                      Click="@DownloadExcel"
+                                      IsBusy="@_isDownloading"
+                                      Style="width: 100%;"/>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeSM="12" SizeMD="4">
+                        @if (_lastUpdate.HasValue)
+                        {
+                            <RadzenText TextStyle="TextStyle.Caption" class="text-end">
+                                Last updated: @_lastUpdate.Value.ToString("yyyy-MM-dd HH:mm:ss") (@_userTimeZoneName)
+                            </RadzenText>
+                        }
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow Gap="1rem" AlignItems="AlignItems.End" Style="margin-bottom: 1rem;">
+                    <RadzenColumn Size="12" SizeSM="4">
+                        <RadzenFormField Text="Search by Code" Style="width: 100%;">
+                            <RadzenTextBox @bind-Value="@_codeSearchText"
+                                           Placeholder="Enter currency code..."
+                                           Change="@OnSearchChanged"
+                                           Style="width: 100%;"/>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeSM="4">
+                        <RadzenFormField Text="Search by Name" Style="width: 100%;">
+                            <RadzenTextBox @bind-Value="@_nameSearchText"
+                                           Placeholder="Enter currency name..."
+                                           Change="@OnSearchChanged"
+                                           Style="width: 100%;"/>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeSM="4">
+                        <RadzenButton Text="Clear Filters"
+                                      Icon="clear"
+                                      ButtonStyle="ButtonStyle.Light"
+                                      Click="@ClearFilters"
+                                      Style="width: 100%;"/>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenDataGrid @ref="_grid"
+                                Data="@_filteredCurrencies"
+                                TItem="Currency"
+                                AllowFiltering="false"
+                                AllowSorting="true"
+                                AllowPaging="true"
+                                PageSize="10"
+                                PagerHorizontalAlign="HorizontalAlign.Left"
+                                ShowPagingSummary="true"
+                                IsLoading="@_isLoading"
+                                Style="height: 500px">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Currency" Property="Code" Title="Currency" Width="120px">
+                            <Template Context="currency">
+                                <RadzenBadge Text="@currency.Code" BadgeStyle="BadgeStyle.Info"/>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="Currency" Property="Name" Title="Currency Name"/>
+
+                        <RadzenDataGridColumn TItem="Currency" Title="@GetRateColumnTitle()" Width="200px" Sortable="false">
+                            <Template Context="currency">
+                                <RadzenText TextStyle="TextStyle.H6" class="rz-color-primary">
+                                    @GetEquivalentAmount(currency).ToString("N4")
+                                </RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>

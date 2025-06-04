@@ -1,0 +1,52 @@
+@page "/converter"
+@inject ICurrencyService CurrencyService
+
+<PageTitle>Currency Converter</PageTitle>
+
+<RadzenRow Gap="5" RowGap="5">
+    <RadzenColumn Size="12" SizeMD="6" OffsetMD="3">
+        <RadzenText Text="Currency Converter" TextStyle="TextStyle.DisplayH4" TagName="TagName.H1" class="text-center mb-4"></RadzenText>
+        
+        <RadzenCard>
+            <RadzenStack Gap="1rem">
+                <!-- Amount Input -->
+                <RadzenFormField Text="Amount">
+                    <RadzenNumeric @bind-Value="@_amount" Placeholder="Enter amount" Style="width: 100%;" />
+                </RadzenFormField>
+
+                <!-- From Currency -->
+                <RadzenFormField Text="From">
+                    <RadzenDropDown @bind-Value="@_fromCurrency" Data="@currencies" ValueProperty="Code" TextProperty="DisplayName" 
+                                    Style="width: 100%;" Placeholder="Select currency" />
+                </RadzenFormField>
+
+                <!-- To Currency -->
+                <RadzenFormField Text="To">
+                    <RadzenDropDown @bind-Value="@_toCurrency" Data="@currencies" ValueProperty="Code" TextProperty="DisplayName" 
+                                    Style="width: 100%;" Placeholder="Select currency" />
+                </RadzenFormField>
+
+                <!-- Convert Button -->
+                <RadzenButton Text="Convert" Icon="currency_exchange" ButtonStyle="ButtonStyle.Primary" 
+                              Click="@ConvertCurrency" Style="width: 100%;" Size="ButtonSize.Large" 
+                              Disabled="@(!CanConvert)" />
+
+                <!-- Result -->
+                @if (_result.HasValue)
+                {
+                    <RadzenCard Style="background-color: var(--rz-base-100);">
+                        <RadzenStack AlignItems="AlignItems.Center" Gap="0.5rem">
+                            <RadzenText TextStyle="TextStyle.H5">
+                                @_amount.ToString("N2") @_fromCurrency
+                            </RadzenText>
+                            <RadzenIcon Icon="arrow_downward" />
+                            <RadzenText TextStyle="TextStyle.DisplayH5" Style="color: var(--rz-primary);">
+                                @_result.Value.ToString("N2") @_toCurrency
+                            </RadzenText>
+                        </RadzenStack>
+                    </RadzenCard>
+                }
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>
