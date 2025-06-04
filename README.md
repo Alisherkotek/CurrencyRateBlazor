@@ -1,6 +1,6 @@
 # 💱 CurrencyRateBlazor
 
-A simple Blazor WebAssembly app that displays and manages currency exchange rates using [Radzen Blazor](https://blazor.radzen.com/) components.
+A simple Blazor Serverside app that displays and manages currency exchange rates using [Radzen Blazor](https://blazor.radzen.com/) components.
 
 ## 🔧 Features
 
