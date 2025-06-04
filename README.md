@@ -7,7 +7,6 @@ A simple Blazor WebAssembly app that displays and manages currency exchange rate
 - View and sort live currency rates
 - Download data as Excel
 - Base currency selection
-- Timezone-aware last updated timestamps
 - Stylish UI using Radzen DataGrid and buttons
 - Local SQLite integration for offline persistence
 
