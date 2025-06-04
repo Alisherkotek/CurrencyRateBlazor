@@ -13,7 +13,7 @@ A simple Blazor WebAssembly app that displays and manages currency exchange rate
 
 ## 🛠️ Technologies Used
 
-- Blazor WebAssembly (.NET 8)
+- Blazor Serverside (.NET 8)
 - Radzen Blazor Components
 - SQLite via EF Core
 - EPPlus (Excel export)
